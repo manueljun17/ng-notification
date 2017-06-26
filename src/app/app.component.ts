@@ -22,6 +22,17 @@ export class AppComponent {
     
 
   }
+  onClickChangeUserLevel(level) {
+     if (navigator.serviceWorker.controller) {
+        console.log("Sendingage to service worker");
+        navigator.serviceWorker.controller.postMessage({
+            "command": "userLevel",
+            "level": level
+        });
+      } else {
+        console.log("No ServiceWorker");
+      }
+  }
   init() {
     console.log("First Initialize");
     if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -123,15 +134,7 @@ export class AppComponent {
       this.updateSubscriptionOnServer(subscription);
 
       this.isSubscribed = true;
-      if (navigator.serviceWorker.controller) {
-        console.log("Sendingage to service worker");
-        navigator.serviceWorker.controller.postMessage({
-            "command": "userLevel",
-            "message": "admin"
-        });
-      } else {
-        console.log("No ServiceWorker");
-      }
+     
       this.updateBtn();
     })
     .catch((err)=> {

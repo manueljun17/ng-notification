@@ -5,6 +5,12 @@
 <button [disabled]="isDisabled" class="subscribe-btn" (click)="onClickSubscribe()">
     {{ subscribeButtonText }}
 </button>
+<button (click)="onClickChangeUserLevel('admin')">
+    admin
+</button>
+<button (click)="onClickChangeUserLevel('user')">
+    user
+</button>
 <h3>Subscription Data</h3>
 <div *ngIf="displaySubscribe && subscribeInfo">
   {{ subscribeInfo }}
