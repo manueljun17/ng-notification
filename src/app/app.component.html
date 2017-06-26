@@ -1,0 +1,11 @@
+<h1>
+  {{title}}
+</h1>
+<!--<button disabled class="js-push-btn mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">-->
+<button [disabled]="isDisabled" class="subscribe-btn" (click)="onClickSubscribe()">
+    {{ subscribeButtonText }}
+</button>
+<h3>Subscription Data</h3>
+<div *ngIf="displaySubscribe && subscribeInfo">
+  {{ subscribeInfo }}
+</div>
