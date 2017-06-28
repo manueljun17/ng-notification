@@ -1,3 +1,7 @@
+declare function require(name:string);//testing
+const crypto = require('crypto');
+console.log("asdasdasd:",crypto);
+const localCurve = crypto.createECDH('prime256v1');
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 

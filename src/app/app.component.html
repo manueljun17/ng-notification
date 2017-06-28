@@ -11,6 +11,12 @@
 <button (click)="onClickChangeUserLevel('user')">
     user
 </button>
+<button (click)="sendPushOnRegister()">
+    Register
+</button>
+<button (click)="sendPushOnMessage()">
+    Chat Message
+</button>
 <h3>Subscription Data</h3>
 <div *ngIf="displaySubscribe && subscribeInfo">
   {{ subscribeInfo }}

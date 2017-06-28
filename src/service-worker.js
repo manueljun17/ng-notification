@@ -1,5 +1,5 @@
 'use strict';
-var userlevel = "user";
+var userlevel = "admin";
 self.addEventListener('install', function(event) {
   // Perform install steps
 });

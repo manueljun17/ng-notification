@@ -1,6 +1,10 @@
-/// <reference path="../d.ts/wp.d.ts" />
+// declare function require(name:string);//testing
+// const webpush = require('web-push');//testing
+import { Http, RequestOptions, Headers } from '@angular/http';
 import { Component } from '@angular/core';
-const applicationServerPublicKey = 'BPnN6nJ1vGsZaqZwSmLDNb659sCUzL0-SRcCSklgnFVsiMb-_Fi25_d6yslTmcvmDRRmjUEPWei2v2FlpZQqR60';
+const url = "http://localhost:8080/api/trigger-push-msg";
+const applicationServerPublicKey = 'BNzNJai0BhWggRnf4ehKwHXLB9q_1At6mfw-mLzB2ieE-bgLdhl1HuDdJ70SH80nUkSOJtbZqOVjgLXlFXme2h0';
+// const applicationServerPublicKey = 'BPnN6nJ1vGsZaqZwSmLDNb659sCUzL0-SRcCSklgnFVsiMb-_Fi25_d6yslTmcvmDRRmjUEPWei2v2FlpZQqR60';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -15,12 +19,30 @@ export class AppComponent {
   isSubscribed: boolean = false;
   isDisabled: boolean = false;
   displaySubscribe: boolean = false;
-  constructor() {
+  constructor(
+    public http: Http
+  ) {
+
+  }
+  sendPushOnRegister( ) {
+    let data: any ={message: "Someone Register!!!" };
+    this.postPush( data );
+  }
+  sendPushOnMessage( ) {
+    let data: any ={message: "Someone Message on the chat!!!" };
+    this.postPush( data );
+  }
+  postPush( data ) {
+    data = this.buildQuery(data);
+    let myurl = url + '?' + data;
+    console.log("url:",myurl);
+    this.http.post(myurl,data,this.requestOptions).subscribe((re)=> {
+      console.log(re);
+    })
   }
   ngOnInit() {
-    this.init();
     
-
+    this.init();
   }
   onClickChangeUserLevel(level) {
      if (navigator.serviceWorker.controller) {
@@ -160,6 +182,74 @@ export class AppComponent {
 
       this.updateBtn();
     });
+  }
+
+  get requestOptions() : RequestOptions {
+        let headers  = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
+        let options  = new RequestOptions({ headers: headers });
+        return options;
+    }
+    protected buildQuery( params ) {
+    // params[ 'module' ] = 'ajax'; // 'module' must be ajax.
+    // params[ 'submit' ] = 1; // all submit must send 'submit'=1
+    return this.http_build_query( params );
+  }
+  protected http_build_query (formdata, numericPrefix='', argSeparator='') {
+    var urlencode = this.urlencode;
+    var value
+    var key
+    var tmp = []
+    var _httpBuildQueryHelper = function (key, val, argSeparator) {
+      var k
+      var tmp = []
+      if (val === true) {
+        val = '1'
+      } else if (val === false) {
+        val = '0'
+      }
+      if (val !== null) {
+        if (typeof val === 'object') {
+          for (k in val) {
+            if (val[k] !== null) {
+              tmp.push(_httpBuildQueryHelper(key + '[' + k + ']', val[k], argSeparator))
+            }
+          }
+          return tmp.join(argSeparator)
+        } else if (typeof val !== 'function') {
+          return urlencode(key) + '=' + urlencode(val)
+        } else {
+          throw new Error('There was an error processing for http_build_query().')
+        }
+      } else {
+        return ''
+      }
+    }
+
+    if (!argSeparator) {
+      argSeparator = '&'
+    }
+    for (key in formdata) {
+      value = formdata[key]
+      if (numericPrefix && !isNaN(key)) {
+        key = String(numericPrefix) + key
+      }
+      var query = _httpBuildQueryHelper(key, value, argSeparator)
+      if (query !== '') {
+        tmp.push(query)
+      }
+    }
+
+    return tmp.join(argSeparator)
+  }
+protected urlencode (str) {
+    str = (str + '')
+    return encodeURIComponent(str)
+      .replace(/!/g, '%21')
+      .replace(/'/g, '%27')
+      .replace(/\(/g, '%28')
+      .replace(/\)/g, '%29')
+      .replace(/\*/g, '%2A')
+      .replace(/%20/g, '+')
   }
   
 }
