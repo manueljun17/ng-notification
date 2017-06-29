@@ -1,7 +1,6 @@
-// declare function require(name:string);//testing
-// const webpush = require('web-push');//testing
 import { Http, RequestOptions, Headers } from '@angular/http';
 import { Component } from '@angular/core';
+import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
 const url = "http://localhost:8080/api/trigger-push-msg";
 const applicationServerPublicKey = 'BNzNJai0BhWggRnf4ehKwHXLB9q_1At6mfw-mLzB2ieE-bgLdhl1HuDdJ70SH80nUkSOJtbZqOVjgLXlFXme2h0';
 // const applicationServerPublicKey = 'BPnN6nJ1vGsZaqZwSmLDNb659sCUzL0-SRcCSklgnFVsiMb-_Fi25_d6yslTmcvmDRRmjUEPWei2v2FlpZQqR60';
@@ -19,10 +18,19 @@ export class AppComponent {
   isSubscribed: boolean = false;
   isDisabled: boolean = false;
   displaySubscribe: boolean = false;
+  subscribers: FirebaseListObservable<any[]>;
   constructor(
-    public http: Http
+    public http: Http,
+    db: AngularFireDatabase
   ) {
-
+      this.subscribers = db.list('/subscriber');
+      this.subscribers
+        .subscribe(snapshots => {
+          snapshots.forEach(snapshot => {
+            console.log(JSON.parse(snapshot.$value));
+          });
+        })
+      
   }
   sendPushOnRegister( ) {
     let data: any ={message: "Someone Register!!!" };
@@ -89,7 +97,6 @@ export class AppComponent {
     this.swRegistration.pushManager.getSubscription()
     .then((subscription)=> {
       this.isSubscribed = !(subscription === null);
-
       this.updateSubscriptionOnServer(subscription);
 
       if ( this.isSubscribed ) {
@@ -154,9 +161,9 @@ export class AppComponent {
       console.log('User is subscribed.');
 
       this.updateSubscriptionOnServer(subscription);
-
+      console.log(subscription);
       this.isSubscribed = true;
-     
+      this.subscribers.push(  JSON.stringify(subscription) );
       this.updateBtn();
     })
     .catch((err)=> {
